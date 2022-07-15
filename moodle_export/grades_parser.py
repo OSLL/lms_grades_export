@@ -13,7 +13,6 @@ HEADERS = {
 
 def main():
     args = args_parser.arg_parser()
-
     with requests.Session() as s:
         # get enrolled users
         res_users = s.get(args.url + '/webservice/rest/server.php?wstoken=' + args.moodle_token +
@@ -35,7 +34,7 @@ def main():
             users_params[str(item["id"])] = {"users_last_accessed": str(lastdate),
                                              "username": item['username'], "email": item['email'],
                                              "github": item['customfields'][0]["value"]}
-        print(users_params)
+        #print(users_params)
 
         # get grades
         grades = ''
@@ -47,6 +46,7 @@ def main():
             raise SystemExit("Request error, response status code: " + str(res_grades.status_code))
 
         grades = json.loads(res_grades.text)
+        #print(grades)
         # check if request is valid
         if "message" in grades:
             raise SystemExit("Error: " + grades["message"])
@@ -59,7 +59,9 @@ def main():
             person_grades["last_access"] = users_params[str(person_grades["userid"])]["users_last_accessed"]
             person_grades["username"] = users_params[str(person_grades["userid"])]["username"]
             person_grades["email"] = users_params[str(person_grades["userid"])]["email"]
-            person_grades["github"] = users_params[str(person_grades["userid"])]["github"]
+            for i in args.options:
+                if i == 'github':
+                    person_grades["github"] = users_params[str(person_grades["userid"])]["github"]
             person_grades["userfullname"] = person["userfullname"]
             person_grades["activities"] = []
             print("userid: " + str(person_grades["userid"]) + " fullname: " + person_grades["userfullname"])
@@ -78,7 +80,6 @@ def main():
                         activity["contributiontocoursetotal"] = activities["contributiontocoursetotal"]["content"]
                         person_grades["activities"].append(activity)
             grades_data.append(person_grades)
-            print(person_grades)
 
         # form suitable structure for output to sheets
         grades_for_table = []
@@ -91,7 +92,9 @@ def main():
             person_grades["fullname"] = item["userfullname"]
             person_grades["username"] = item["username"]
             person_grades["email"] = item["email"]
-            person_grades["github"] = item["github"]
+            for i in args.options:
+                if i == 'github':
+                    person_grades["github"] = item["github"]
             person_grades["last_access"] = item["last_access"]
             for activity in item["activities"]:
                 person_grades[activity["activity_name"]] = activity[grades_type]
@@ -104,7 +107,7 @@ def main():
             writer.writerows(grades_for_table)  
 
         # if args specified write data to sheets document
-        sheets.write_data_to_table(args)
+        sheets.write_data_to_table(args.csv_path, args.google_token, args.table_id, args.sheet_id)
 
 
 if __name__ == "__main__":
