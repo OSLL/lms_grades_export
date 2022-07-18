@@ -6,9 +6,9 @@
 
 ``` pip3 install -r requirements.txt ```
 
-Чтобы получить данные в файл grades.csv следует прописать:
+Чтобы получить данные в файл csv следует прописать:
 
-``` python3 grades_parser.py --moodle_token "your token" --url http://e.moevm.info --course_id "your course id" --csv_path grades.csv ```
+``` python3 grades_parser.py --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github]```
  ```
 
 Если хотите получить не баллы за задания, а проценты, то нужно добавить параметр ``` --percentages ```.
@@ -18,7 +18,7 @@
 
 Получение данных и в файл и в Google таблицу:
 
-``` python3 grades_parser.py grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id" --csv_path grades.csv --google_token "your google token" --table_id "your table id" --sheet_id grades ```
+``` python3 grades_parser.py grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github] --google_token "your google token" --table_id "your table id"[,"id",..] --sheet_id "name of sheet" ```
  ```
 
 Получение ``` .json ``` файла для google_token будет описано ниже.
@@ -33,7 +33,7 @@
 
 Запуск докер контейнера с параметрами:
 
-``` docker run --rm grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id" --csv_path grades.csv --google_token "your google token" --table_id "your table id" --sheet_id grades ```
+``` docker run --rm grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github] --google_token "your google token" --table_id "your table id"[,"id",..] --sheet_id "name of sheet" ```
 
 
 ## Получение Moodle Токена.
