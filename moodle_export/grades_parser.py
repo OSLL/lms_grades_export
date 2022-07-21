@@ -58,9 +58,10 @@ def main():
                 person_grades["last_access"] = users_params[str(person_grades["userid"])]["users_last_accessed"]
                 person_grades["username"] = users_params[str(person_grades["userid"])]["username"]
                 person_grades["email"] = users_params[str(person_grades["userid"])]["email"]
-                for i in args.options:
-                    if i == 'github':
-                        person_grades["github"] = users_params[str(person_grades["userid"])]["github"]
+                if args.options:
+                    for i in args.options:
+                        if i == 'github':
+                            person_grades["github"] = users_params[str(person_grades["userid"])]["github"]
                 person_grades["userfullname"] = person["userfullname"]
                 person_grades["activities"] = []
                 print("userid: " + str(person_grades["userid"]) + " fullname: " + person_grades["userfullname"])
@@ -91,9 +92,10 @@ def main():
                 person_grades["fullname"] = item["userfullname"]
                 person_grades["username"] = item["username"]
                 person_grades["email"] = item["email"]
-                for i in args.options:
-                    if i == 'github':
-                        person_grades["github"] = item["github"]
+                if args.options:
+                    for i in args.options:
+                        if i == 'github':
+                            person_grades["github"] = item["github"]
                 person_grades["last_access"] = item["last_access"]
                 for activity in item["activities"]:
                     person_grades[activity["activity_name"]] = activity[grades_type]
@@ -110,14 +112,20 @@ def main():
             for i in range(0, len(args.table_id)):
                 if args.course_id[i] == course_id:
                     table_id = args.table_id[i]
+                    break
                 elif i == len(args.table_id) - 1:
-                    table_id = args.table_id[0]
+                    table_id = args.table_id[i]
 
             if args.sheet_id:
-                sheet_id = args.sheet_id + ' ' + course_id
+                for i in range(0, len(args.sheet_id)):
+                    if args.course_id[i] == course_id:
+                        sheet_id = args.sheet_id[i]
+                        break
+                    else:
+                        sheet_id = args.sheet_id[i] + ' ' + course_id
             else:
                 sheet_id = 'course ' + course_id
-            print(course_id, table_id, sheet_id)
+
             sheets.write_data_to_table(csv_path, args.google_token, table_id, sheet_id)
 
 
