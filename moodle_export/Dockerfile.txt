@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/Dockerfile:1
 FROM python:3.8
 
 WORKDIR /app
