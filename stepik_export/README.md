@@ -10,9 +10,6 @@
 
 ``` python3 gstepik_parser.py --client_id "Your client id" --client_secret "Your client secret" --url https://stepik.org:443/api --course_id "Your course id" --class_id "Your class id" --csv_path grades ```
 
-Также в таблицу можно добавить опциональные графы по тегу ``` --options ``` без пробелов через запятую. 
-Пока доступных опций нет.
-
 
 Получение данных и в файл и в Google таблицу:
 
@@ -31,10 +28,10 @@
 
 Запуск докер контейнера с параметрами:
 
-``` docker run --rm stepik_parser.py --client_id "Your client id" --client_secret "Your client secret" --url https://stepik.org:443/api --course_id "Your course id" --class_id "Your class id" --csv_path grades --google_token "Path to your google token" --table_id "Your table id" [--sheet_id "Name of sheet"] ```
+``` docker run -v "Path to your google token":/app/ --rm stepik_parser.py --client_id "Your client id" --client_secret "Your client secret" --url https://stepik.org:443/api --course_id "Your course id" --class_id "Your class id" --csv_path grades --google_token "Path to your google token" --table_id "Your table id" [--sheet_id "Name of sheet"] ```
 
 
-## Получение Moodle Токена.
+## Получение Stepik Токена.
 
 Не являясь администратором можно получить client_id и client_secret.
 
