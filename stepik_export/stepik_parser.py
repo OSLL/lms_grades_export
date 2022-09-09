@@ -70,9 +70,14 @@ def main():
         print(f'Authorization valid')
 
     # get grades data
-    grades_meta = requests.get(args.url + '/course-grades?course=' + args.course_id + '&klass=' + args.class_id,
-                    headers={'Authorization': 'Bearer ' + token})
-    course_grades = check_access(grades_meta)
+    if args.class_id:
+        grades_meta = requests.get(args.url + '/course-grades?course=' + args.course_id + '&klass=' + args.class_id,
+                        headers={'Authorization': 'Bearer ' + token})
+        course_grades = check_access(grades_meta)
+    else: # get grades data $$$
+        grades_meta = requests.get(args.url + '/course-grades?course=' + args.course_id + '&page=' + str(page),
+                                   headers={'Authorization': 'Bearer ' + token})
+        course_grades = check_access(grades_meta)
 
     # Parse grades
     while True:
@@ -85,15 +90,21 @@ def main():
 
             if course_grades['meta']['has_next']:
                 page += 1
-                grades_meta = requests.get(
-                    args.url + '/course-grades?course=' + args.course_id + '&klass=' + args.class_id + '&page=' + str(page),
-                    headers={'Authorization': 'Bearer ' + token})
+                if args.class_id:
+                    grades_meta = requests.get(
+                        args.url + '/course-grades?course=' + args.course_id + '&klass=' + args.class_id + '&page=' + str(page),
+                        headers={'Authorization': 'Bearer ' + token})
+                else:
+                    grades_meta = requests.get(
+                        args.url + '/course-grades?course=' + args.course_id + '&page=' + str(page),
+                        headers={'Authorization': 'Bearer ' + token})
                 course_grades = check_access(grades_meta)
             else:
                 print('Well done! Start converting')
                 break
         else:
             print("O-oh, let's try again")
+            break
             exit(1)
 
     # output data to csv file
@@ -102,7 +113,7 @@ def main():
         writer = csv.DictWriter(f, fieldnames=grades_for_table[0].keys())
         writer.writeheader()
         writer.writerows(grades_for_table)
-        print(f'Saved to csv file: {csv_path}')
+    print(f'Saved to csv file: {csv_path}')
 
     # write data to sheets document
     if args.google_token:
