@@ -8,7 +8,7 @@
 
 Чтобы получить данные в файл csv следует прописать:
 
-``` python3 gstepik_parser.py --client_id "Your client id" --client_secret "Your client secret" --url https://stepik.org:443/api --course_id "Your course id" --class_id "Your class id" --csv_path grades ```
+``` python3 stepik_parser.py --client_id "Your client id" --client_secret "Your client secret" --url https://stepik.org:443/api --course_id "Your course id" --class_id "Your class id" --csv_path grades ```
 
 
 Получение данных и в файл и в Google таблицу:
