@@ -38,7 +38,10 @@ def parse_grades(user, url, token, sorted_steps):
                              headers={'Authorization': 'Bearer ' + token})
     user_data = check_access(user_meta)
     full_name = user_data['users'][0]['full_name']
-    last_viewed = user['last_viewed'][:10] + ' ' + user['last_viewed'][11:16]
+    if user.get("last_viewed") is None:
+        last_viewed = "Never"
+    else:
+        last_viewed = user['last_viewed'][:10] + ' ' + user['last_viewed'][11:16]
     grades = ({'user id': user['user'], 'full name': full_name, 'last viewed': last_viewed, 'total score': user['score']})
     lesson = list(user['results'].keys())[0].split('-')[0]
 
