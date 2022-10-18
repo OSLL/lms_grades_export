@@ -24,7 +24,7 @@
 
 Создание докер образа:
 
-``` docker build --tag grades_parser . ```
+``` docker build --tag stepik_grades_parser . ```
 
 Запуск докер контейнера с параметрами:
 
