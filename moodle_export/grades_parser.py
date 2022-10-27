@@ -32,17 +32,18 @@ def main():
             users_params = {}
             for item in users:
                 lastdate = datetime.datetime.fromtimestamp(item['lastcourseaccess']).strftime('%Y-%m-%d %H:%M:%S')
-                users_params[str(item["id"])] = {"users_last_accessed": str(lastdate), "email": item['email']}
+                users_params[str(item["id"])] = {"users_last_accessed": str(lastdate), "username": item.get("username", "-"),  "email": item.get("email", "-")}
 
                 if 'customfields' in item:
-                    users_params[str(item["id"])]["github"] = item['customfields'][0]["value"]
+                    users_params[str(item["id"])]["github"] = item['customfields'][0].get("value", "-")
                 else:
-                    users_params[str(item["id"])]["github"] = '-'
+                    users_params[str(item["id"])]["github"] = "-"
 
             # get grades
             res_grades = s.get(args.url + '/webservice/rest/server.php?wstoken=' + args.moodle_token +
                                '&wsfunction=gradereport_user_get_grades_table&courseid=' + course_id + '&moodlewsrestformat=json',
                                headers=HEADERS)
+
             # check status code
             if res_grades.status_code != 200:
                 raise SystemExit("Request error, response status code: " + str(res_grades.status_code))
@@ -60,6 +61,7 @@ def main():
                 person_grades = {}
                 person_grades["userid"] = person["userid"]
                 person_grades["last_access"] = users_params[str(person_grades["userid"])]["users_last_accessed"]
+                person_grades["username"] = users_params[str(person_grades["userid"])]["username"]
                 person_grades["email"] = users_params[str(person_grades["userid"])]["email"]
                 if args.options:
                     for i in args.options:
@@ -78,10 +80,10 @@ def main():
                         if activity_name == "Course total":
                             flag = 'en'
                             activity["activity_name"] = "total"
-                        if activity_name == "Итоговая оценка за курс":
+                        elif activity_name == "Итоговая оценка за курс":
                             flag = 'ru'
                             activity["activity_name"] = "total"
-                        if flag == 'en':
+                        elif flag == 'en':
                             activity["activity_name"] = activity_name[
                                                         activity_name.find(activity_str1) + len(activity_str1):]
                         elif flag == 'ru':
@@ -103,6 +105,7 @@ def main():
             for item in grades_data:
                 person_grades = {}
                 person_grades["fullname"] = item["userfullname"]
+                person_grades["username"] = item["username"]
                 person_grades["email"] = item["email"]
                 if args.options:
                     for i in args.options:
