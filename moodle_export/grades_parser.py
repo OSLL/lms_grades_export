@@ -55,12 +55,7 @@ def main():
                 users_params[str(item["id"])] = {"users_last_accessed": str(lastdate), "username": item.get("username", "-"),  "email": item.get("email", "-")}
 
                 if 'customfields' in item:
-                    github = item['customfields'][0].get("value", "-")
-                    httpgit = github.split('https://github.com/')
-                    if len(httpgit) == 2:
-                        users_params[str(item["id"])]["github"] = httpgit[1]
-                    else:
-                        users_params[str(item["id"])]["github"] = github
+                    users_params[str(item["id"])]["github"] = item['customfields'][0].get("value", "-")
                 else:
                     users_params[str(item["id"])]["github"] = "-"
 
