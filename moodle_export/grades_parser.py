@@ -18,7 +18,7 @@ def main():
             # get enrolled users
             res_users = s.get(args.url + '/webservice/rest/server.php?wstoken=' + args.moodle_token +
                               '&wsfunction=core_enrol_get_enrolled_users&courseid=' + course_id + '&moodlewsrestformat=json',
-                              headers=HEADERS)
+                              headers=HEADERS, verify=False)
             # check status code
             if res_users.status_code != 200:
                 raise SystemExit("Request error, response status code: " + str(res_users.status_code))
@@ -42,7 +42,7 @@ def main():
             # get grades
             res_grades = s.get(args.url + '/webservice/rest/server.php?wstoken=' + args.moodle_token +
                                '&wsfunction=gradereport_user_get_grades_table&courseid=' + course_id + '&moodlewsrestformat=json',
-                               headers=HEADERS)
+                               headers=HEADERS, verify=False)
 
             # check status code
             if res_grades.status_code != 200:
