@@ -34,7 +34,7 @@ def write_data_to_table(checker_token, checker_filter, google_token, table_id, s
     
     url = f'{EXPORT_URL}&{checker_filter}'
     print(url)
-    csv_path = StringIO(requests.get(print(url), cookies={'session':checker_token}).content.decode('utf-8'))
+    csv_path = StringIO(requests.get(url, cookies={'session':checker_token}).content.decode('utf-8'))
 
     if csv_path:
         df = pd.read_csv(csv_path)
