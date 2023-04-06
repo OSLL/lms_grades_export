@@ -33,8 +33,9 @@ def write_data_to_table(checker_token, checker_filter, google_token, table_id, s
     wk_content = sh.worksheet_by_title(sheet_id)
     
     checker_filter = urllib.parse.quote(checker_filter)
-    
-    csv_path = StringIO(requests.get(f'{EXPORT_URL}&{checker_filter}', cookies={'session':checker_token}).content.decode('utf-8'))
+    url = f'{EXPORT_URL}&{checker_filter}'
+    print(url)
+    csv_path = StringIO(requests.get(print(url), cookies={'session':checker_token}).content.decode('utf-8'))
 
     if csv_path:
         df = pd.read_csv(csv_path)
