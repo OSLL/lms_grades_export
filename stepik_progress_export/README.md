@@ -6,19 +6,15 @@
 
 ## Использование
 
-В файле `config.toml` нужно указать:
-- `stepik_id`, `stepik_secret` - параметры OAuth (https://stepik.org/oauth2/applications/)
+Запуск: `pythoh main.py`.
+
+Аргументы:
+- `client_id`, `client_secret` - параметры OAuth (https://stepik.org/oauth2/applications/)
 - `course_id` - ID курса (отсюда: https://stepik.org/course/63054/syllabus)
 - `class_id` - ID класса (отсюда: https://stepik.org/class/33587/gradebook)
+- `csv_path` - путь до CSV
 
-Скачать даные: `python -m main.py`. Будет создан файл `res.csv`, где одна строка имеет следующий формат:
-1. `user_id`
-2. `score` - Оценка человека по курсу
-3. `date_joined` - Дата присоединения  
-
-4..N `id шага` - время успешного решения шага (ISO 8601)
-
-Обработать данные: `python -m process.py`. Будет создан файл `processed.csv` со следующим форматов:
+Будет создан CSV-файл со следующим форматов:
 1. `user_id`
 2. `score` - Оценка человека по курсу
 3. `date_joined` - Дата присоединения
