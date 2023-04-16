@@ -6,13 +6,18 @@
 
 ## Использование
 
-Запуск: `pythoh main.py`.
+Запуск: `python main.py` или `docker-compose run parser`
 
 Аргументы:
 - `client_id`, `client_secret` - параметры OAuth (https://stepik.org/oauth2/applications/)
 - `course_id` - ID курса (отсюда: https://stepik.org/course/63054/syllabus)
 - `class_id` - ID класса (отсюда: https://stepik.org/class/33587/gradebook)
 - `csv_path` - путь до CSV
+
+Например:
+```bash
+docker-compose run parser --client_id xxx --client_secret xxx --course_id 63054 --class_id 33587 --csv_path ./results/kek.csv 
+```
 
 Будет создан CSV-файл со следующим форматов:
 1. `user_id`

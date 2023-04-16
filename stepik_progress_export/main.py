@@ -90,15 +90,15 @@ def get_info(access_token, course_id, class_id):
 
     is_read = {}
 
-    data = data[:2]
+    # data = data[:2]
 
-    if os.path.exists("res.csv"):
-        df = pd.read_csv("res.csv")
-        for _, datum in df.iterrows():
-            user_id = datum["user_id"]
-            for step_id in step_ids:
-                if not pd.isna(datum.get(str(step_id), None)):
-                    is_read[f"{user_id}-{step_id}"] = datum.get(str(step_id))
+    # if os.path.exists("res.csv"):
+    #     df = pd.read_csv("res.csv")
+    #     for _, datum in df.iterrows():
+    #         user_id = datum["user_id"]
+    #         for step_id in step_ids:
+    #             if not pd.isna(datum.get(str(step_id), None)):
+    #                 is_read[f"{user_id}-{step_id}"] = datum.get(str(step_id))
 
     # print(is_read)
 
