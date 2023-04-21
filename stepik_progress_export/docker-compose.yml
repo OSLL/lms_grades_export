@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  parser:
+    container_name: stepik-progress-parser
+    build:
+      context: .
+    restart: 'no'
+    volumes:
+      - ./results:/app/results/
