@@ -13,7 +13,9 @@ INT_MASS = [{
     "what?": 3
 }]
 
-EXPORT_URL = "https://slides-checker.moevm.info/get_csv?limit=10&&offset=0&sort=&order=&latest=true"
+
+EXPORT_URL = "https://slides-checker.moevm.info/get_csv?limit=0&&offset=0&sort=&order=&"
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
