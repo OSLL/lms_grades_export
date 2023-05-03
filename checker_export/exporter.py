@@ -14,7 +14,7 @@ INT_MASS = [{
 }]
 
 
-EXPORT_URL = "https://slides-checker.moevm.info/get_csv?limit=0&&offset=0&sort=&order="
+EXPORT_URL = "https://slides-checker.moevm.info/get_csv?limit=0&offset=0&sort=&order="
 
 
 def parse_args():
