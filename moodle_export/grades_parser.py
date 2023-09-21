@@ -95,6 +95,10 @@ def main():
                             activity["contributiontocoursetotal"] = activities["contributiontocoursetotal"]["content"]
                             person_grades["activities"].append(activity)
                 grades_data.append(person_grades)
+  
+            if len(grades_data) == 0:
+                print("No solutions in course, nothing to export. Exiting")
+                return
 
             # form suitable structure for output to sheets
             grades_for_table = []
