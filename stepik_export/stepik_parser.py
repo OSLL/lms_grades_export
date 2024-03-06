@@ -43,7 +43,12 @@ def parse_grades(user, url, token, sorted_steps):
     else:
         last_viewed = user['last_viewed'][:10] + ' ' + user['last_viewed'][11:16]
     grades = ({'user id': user['user'], 'full name': full_name, 'last viewed': last_viewed, 'total score': user['score']})
-    lesson = list(user['results'].keys())[0].split('-')[0]
+
+    if user['results']:
+        lesson = list(user['results'].keys())[0].split('-')[0]
+    else:
+        print("No results for user ", user['id'])
+        return {}
 
     if sorted_steps == []:
         sorted_steps = sort_steps(lesson, user['results'])
