@@ -47,7 +47,7 @@ def parse_grades(user, url, token, sorted_steps):
     if user['results']:
         lesson = list(user['results'].keys())[0].split('-')[0]
     else:
-        print("No results for user ", user)
+        print("No results for user ", user['id'])
         return {}
 
     if sorted_steps == []:
