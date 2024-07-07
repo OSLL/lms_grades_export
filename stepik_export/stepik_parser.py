@@ -124,29 +124,27 @@ def main():
     print(f'Saved to csv file: {csv_path}')
 
     # write data to sheets document
-    if args.google_token:
-        if args.table_id:
-            print('Send data to Google Sheets')
-            if args.sheet_id:
-                sheet_id = args.sheet_id
-            else:
-                sheet_id = 'course ' + args.course_id
-            sheets.write_data_to_table(csv_path, args.google_token, args.table_id, sheet_id)
-            print(f'Check data in your table! List name is: {sheet_id}')
-            print('********************************************************')
+    if args.google_token and args.table_id:
+        print('Send data to Google Sheets')
+        if args.sheet_id:
+            sheet_id = args.sheet_id
+        else:
+            sheet_id = 'course ' + args.course_id
+        sheets.write_data_to_table(csv_path, args.google_token, args.table_id, sheet_id)
+        print(f'Check data in your table! List name is: {sheet_id}')
+        print('********************************************************')
     
     # write data to yandex disk
-    if args.yandex_token:
-        if args.yandex_path:
-            yandex_path = args.yandex_path + '_' + args.course_id + '.csv'
-            try:
-                client = yadisk.YaDisk(token=args.yandex_token)
-                client.upload(csv_path, yandex_path)
-                print(f'Check data in your disk! Path to the table is: {yandex_path}')
-                print('********************************************************')
-            except Exception as e:
-                print(f'Saving data to Yandex Disk failed. Error message: {e}')
-                exit(1)
+    if args.yandex_token and args.yandex_path:
+        yandex_path = args.yandex_path + '_' + args.course_id + '.csv'
+        try:
+            client = yadisk.YaDisk(token=args.yandex_token)
+            client.upload(csv_path, yandex_path)
+            print(f'Check data in your disk! Path to the table is: {yandex_path}')
+            print('********************************************************')
+        except Exception as e:
+            print(f'Saving data to Yandex Disk failed. Error message: {e}')
+            exit(1)
 
 if __name__ == "__main__":
     main()

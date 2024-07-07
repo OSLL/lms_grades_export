@@ -13,10 +13,12 @@
 - `course_id` - ID курса (отсюда: https://stepik.org/course/63054/syllabus)
 - `class_id` - ID класса (отсюда: https://stepik.org/class/33587/gradebook)
 - `csv_path` - путь до CSV
+- `yandex_token` - токен доступа Yandex App (отсюда: https://oauth.yandex.ru/client/new)
+- `yandex_path` - путь до CSV на Диске
 
 Например:
 ```bash
-docker-compose run parser --client_id xxx --client_secret xxx --course_id 63054 --class_id 33587 --csv_path ./results/kek.csv 
+docker-compose run parser --client_id xxx --client_secret xxx --course_id 63054 --class_id 33587 --csv_path ./results/kek.csv --yandex_token xxx --yandex_path kek.csv
 ```
 
 Будет создан CSV-файл со следующим форматов:
