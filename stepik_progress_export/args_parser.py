@@ -16,5 +16,12 @@ def arg_parser():
     parser.add_argument(
         "--csv_path", type=str, required=True, help="Specify path to output csv file"
     )
+    parser.add_argument(
+        '--yandex_token', type=str, required=False, 
+        help='Specify Yandex token from https://oauth.yandex.ru/client/new application'
+    )
+    parser.add_argument(
+        '--yandex_path', type=str, required=False, help='Specify output filename on Yandex Disk'
+    )
     args = parser.parse_args()
     return args

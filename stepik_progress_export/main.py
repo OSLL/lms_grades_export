@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import requests
+import yadisk
 from tqdm import tqdm
 
 from args_parser import arg_parser
@@ -173,6 +174,14 @@ def postprocess_df(df):
 
     return new_df
 
+def load_to_yandex_disk(csv_path, dest_path, token):
+    try:
+        client = yadisk.YaDisk(token=token)
+        client.upload(csv_path, dest_path)
+        print(f'Check data in your disk! Path to the table is: {dest_path}')
+    except Exception as e:
+        print(f'Saving data to Yandex Disk failed. Error message: {e}')
+        return
 
 if __name__ == "__main__":
     args = arg_parser()
@@ -180,3 +189,5 @@ if __name__ == "__main__":
     df = get_info(access_token=token, course_id=args.course_id, class_id=args.class_id)
     new_df = postprocess_df(df)
     new_df.to_csv(args.csv_path, index=False)
+    if args.yandex_token and args.yandex_path:
+        load_to_yandex_disk(args.csv_path, args.yandex_path, args.yandex_token)

@@ -5,6 +5,7 @@ import json
 import datetime
 import csv
 import args_parser
+import yadisk
 
 HEADERS = {
     "Content-Type": "charset=iso-8859"
@@ -146,7 +147,17 @@ def main():
                 sheet_id = 'course ' + course_id
 
             sheets.write_data_to_table(csv_path, args.google_token, table_id, sheet_id)
-
+            
+            # write data to yandex disk
+            if args.yandex_token and args.yandex_path:
+                yandex_path = args.yandex_path + '_' + args.course_id + '.csv'
+                try:
+                    client = yadisk.YaDisk(token=args.yandex_token)
+                    client.upload(csv_path, yandex_path)
+                    print(f'Course {args.course_id} saved to Disk! Path to the table is: {yandex_path}')
+                    print('********************************************************')
+                except Exception as e:
+                    print(f'Course {args.course_id}: saving data to Yandex Disk failed. Error message: {e}')
 
 if __name__ == "__main__":
     main()
