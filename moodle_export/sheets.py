@@ -3,14 +3,7 @@ import pandas as pd
 import args_parser
 
 
-INT_MASS = [{
-    "one": 1,
-    "two": 2,
-    "what?": 3
-}]
-
-
-def write_data_to_table(csv_path, google_token, table_id, sheet_id):
+def write_data_to_table(df_data, google_token, table_id, sheet_id):
     if google_token and sheet_id and table_id:
         gc = pygsheets.authorize(service_file=google_token)
         sh = gc.open_by_key(table_id)
@@ -22,12 +15,7 @@ def write_data_to_table(csv_path, google_token, table_id, sheet_id):
 
     wk_content = sh.worksheet_by_title(sheet_id)
 
-    if csv_path:
-        df = pd.read_csv(csv_path)
-        content = pd.DataFrame(df.to_dict('records'))
-    else:
-        content = pd.DataFrame(INT_MASS)
-    wk_content.set_dataframe(content, 'A1', copy_head=True)
+    wk_content.set_dataframe(df_data, 'A1', copy_head=True)
 
 
 def main():
