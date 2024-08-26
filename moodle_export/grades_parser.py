@@ -72,9 +72,10 @@ def main():
                 person_grades["activities"] = []
                 print("userid: " + str(person_grades["userid"]) + " fullname: " + person_grades["userfullname"])
                 for activities in person["tabledata"]:
-                    if type(activities) != list:
+                    itemname_key = 'itemname'
+                    if type(activities) != list and activities.get(itemname_key):
                         activity = {}
-                        activity_name = activities["itemname"]["content"].partition("title=\"")[2].split("\" ")[0]
+                        activity_name = activities[itemname_key]["content"].partition("title=\"")[2].split("\" ")[0]
                         print(activity_name)
                         activity_str1 = "activity "
                         activity_str0 = "» "
