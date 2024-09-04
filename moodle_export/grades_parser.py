@@ -45,6 +45,7 @@ class Main:
                         activity_name_raw_content = activity[itemname_key]["content"]   # html
                         activity_name = activity_name_raw_content.rpartition("</a>")[0].rsplit("\">")[-1]
                         activity_id = activity[itemname_key]['id'].split("_")[1]
+                        activity["grade"]["content"] = activityctivity["grade"]["content"].rsplit(">", 1)[-1]
                     else:
                         activity_name = 'total'
                         if activity["grade"]["content"] == '-':
