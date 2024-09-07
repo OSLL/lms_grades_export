@@ -16,7 +16,7 @@ function exportCourses() {
   for ((i=0;i<=${#exports[@]}-1;i++)); do
       IFS=';' read -r -a current_export <<< "${exports[$i]}"
       
-      echo "Экспорт для дисциплины ${current_export[0]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
+      echo "Экспорт для дисциплины ${current_export[0]} из ${current_export[3]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
       
       if [[ "${current_export[3]}" == "moodle" ]]
       then
