@@ -15,7 +15,7 @@ function exportCourses() {
     for line in "${exports[@]}"; do
         IFS=',' read -r -a current_export <<< "$line"
 
-        echo "Экспорт для дисциплины ${current_export[0]} из ${current_export[3]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
+        echo ">>>>> Экспорт для дисциплины ${current_export[0]} из ${current_export[3]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
 
         if [[ "${current_export[3]}" == "moodle" ]]; then
             docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest \
