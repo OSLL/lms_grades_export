@@ -29,7 +29,7 @@ function exportCourses() {
             return_code=$?
         fi
 
-        if [[ "${current_export[1]}" == "stepik" ]]; then
+        if [[ "${current_export[3]}" == "stepik" ]]; then
 
             docker run --rm -v $google_conf:/app/conf.json stepik_export_parser:latest
               --client_id $stepik_client_id --client_secret $stepik_client_secret
@@ -44,7 +44,7 @@ function exportCourses() {
 
         fi
 
-        if [[ "${current_export[1]}" == "checker" ]]; then
+        if [[ "${current_export[3]}" == "checker" ]]; then
             echo "Not implemented"
             return_code=$1
         fi
