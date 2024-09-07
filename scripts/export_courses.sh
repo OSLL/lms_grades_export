@@ -55,3 +55,10 @@ function exportCourses() {
 
     done
 }
+
+function download_csv() {
+# usage: download_csv tablr_id [export_file_path]
+  table_id="$1"
+  export_file=${2:-'export.csv'}
+  wget -O $export_file "https://docs.google.com/spreadsheets/d/$table_id/export?format=csv"
+}
