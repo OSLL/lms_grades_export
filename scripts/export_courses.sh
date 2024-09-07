@@ -49,7 +49,7 @@ function exportCourses() {
             return_code=$1
         fi
 
-        if [[ "$return_code" -ne 0 ]]; then
+        if [[ "$return_code" -ne "0" ]]; then
             exit 1
         fi
 
