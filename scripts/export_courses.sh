@@ -18,12 +18,12 @@ function exportCourses() {
         echo "Экспорт для дисциплины ${current_export[0]} из ${current_export[3]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
 
         if [[ "${current_export[3]}" == "moodle" ]]; then
-            docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest
-              --moodle_token $moodle_token --url https://e.moevm.info
-              --csv_path grades --google_token conf.json
-              --course_id ${current_export[4]}
-              --table_id ${current_export[1]}
-              --sheet_id ${current_export[2]}
+            docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest \
+              --moodle_token $moodle_token --url https://e.moevm.info \
+              --csv_path grades --google_token conf.json \
+              --course_id ${current_export[4]} \
+              --table_id ${current_export[1]} \
+              --sheet_id ${current_export[2]} \
               --options github
 
             return_code=$?
@@ -31,13 +31,13 @@ function exportCourses() {
 
         if [[ "${current_export[3]}" == "stepik" ]]; then
 
-            docker run --rm -v $google_conf:/app/conf.json stepik_export_parser:latest
-              --client_id $stepik_client_id --client_secret $stepik_client_secret
-              --url https://stepik.org:443/api
-              --csv_path grades --google_token conf.json
-              --course_id ${current_export[4]}
-              --class_id ${current_export[5]}
-              --table_id ${current_export[1]}
+            docker run --rm -v $google_conf:/app/conf.json stepik_export_parser:latest \
+              --client_id $stepik_client_id --client_secret $stepik_client_secret \
+              --url https://stepik.org:443/api \
+              --csv_path grades --google_token conf.json \
+              --course_id ${current_export[4]} \
+              --class_id ${current_export[5]} \
+              --table_id ${current_export[1]} \
               --sheet_id ${current_export[2]}
 
             return_code=$?
