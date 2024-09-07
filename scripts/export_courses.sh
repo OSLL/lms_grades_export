@@ -3,7 +3,7 @@
 # usage function in other script:
 # source ./scripts/export_courses.sh
 # exports=(
-#   'humanreadeble_subject;table_id;sheet_name;system;exportinfo'
+#   'humanreadable_subject;table_id;sheet_name;system;exportinfo'
 # )
 # system: "moodle" - Предмет;1zG21U9zJHIkfAM5ejd8WBw;Онлайн-курс;moodle;course_id
 # system: "stepik" - Прудмет;1zG21U9zJHIkfAM5ejd8WBw;Онлайн-курс;stepik;course_id;class_id
@@ -57,7 +57,7 @@ function exportCourses() {
 }
 
 function download_csv() {
-# usage: download_csv tablr_id [export_file_path]
+# usage: download_csv table_id [export_file_path]
   table_id="$1"
   export_file=${2:-'export.csv'}
   wget -O $export_file "https://docs.google.com/spreadsheets/d/$table_id/export?format=csv"
