@@ -46,7 +46,7 @@ function exportCourses() {
 
         if [[ "${current_export[3]}" == "checker" ]]; then
             echo "Not implemented"
-            return_code=$1
+            return_code=1
         fi
 
         if [[ "$return_code" -ne "0" ]]; then
