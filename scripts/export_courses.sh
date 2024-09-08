@@ -10,13 +10,21 @@
 # exportCourses "${exports[@]}"
 
 function exportCourses() {
+    # get args (=array of csv rows)
     exports=("$@")
     
+    # init log file
+    log_file="exportCourses.log"
+    echo "" > $log_file
+
+    # proccess
     for line in "${exports[@]}"; do
         IFS=',' read -r -a current_export <<< "$line"
 
-        echo ">>>>> Экспорт для дисциплины ${current_export[0]} из ${current_export[3]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
-
+        info_msg=">>>>> Экспорт для дисциплины ${current_export[0]} из ${current_export[3]} в таблицу ${current_export[1]} на лист ${current_export[2]}"
+        echo $info_msg
+        echo $info_msg >> $log_file
+        
         if [[ "${current_export[3]}" == "moodle" ]]; then
             docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest \
               --moodle_token $moodle_token --url https://e.moevm.info \
@@ -24,7 +32,7 @@ function exportCourses() {
               --course_id ${current_export[4]} \
               --table_id ${current_export[1]} \
               --sheet_id ${current_export[2]} \
-              --options github
+              --options github >& $log_file
 
             return_code=$?
         fi
@@ -38,7 +46,7 @@ function exportCourses() {
               --course_id ${current_export[4]} \
               --class_id ${current_export[5]} \
               --table_id ${current_export[1]} \
-              --sheet_id ${current_export[2]}
+              --sheet_id ${current_export[2]} >& $log_file
 
             return_code=$?
 
@@ -50,9 +58,10 @@ function exportCourses() {
         fi
 
         if [[ "$return_code" -ne "0" ]]; then
+            cat $log_file
             exit 1
         fi
-
+    
     done
 }
 
