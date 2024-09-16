@@ -24,6 +24,7 @@ def write_data_to_table(csv_path, google_token, table_id, sheet_id):
 
     if csv_path:
         df = pd.read_csv(csv_path)
+        df.fillna(0, inplace=True)
         content = pd.DataFrame(df.to_dict('records'))
     else:
         content = pd.DataFrame(INT_MASS)
