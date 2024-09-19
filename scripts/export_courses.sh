@@ -61,7 +61,10 @@ function exportCourses() {
             cat $log_file
             exit 1
         fi
-    
+        
+        end_info_msg=">>>>> Конец экспорта для дисциплины"
+        echo $end_info_msg
+        echo $end_info_msg >> $log_file
     done
 }
 
