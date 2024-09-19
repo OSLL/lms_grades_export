@@ -88,12 +88,14 @@ def main():
         course_grades = check_access(grades_meta)
 
     # Parse grades
+    all_task_id = set()
     while True:
         if course_grades['course-grades']:
             print(f'Parse {page} page')
             for user in course_grades['course-grades']:
                 grades = parse_grades(user, args.url, token, sorted_steps)
                 grades_for_table.append(grades)
+                all_task_id.update(grades.keys())    # save all task id from student
             print('Parsed!')
 
             if course_grades['meta']['has_next']:
@@ -118,7 +120,7 @@ def main():
     # output data to csv file
     csv_path = args.csv_path + '_' + args.course_id + '.csv'
     with open(csv_path, 'w', encoding='UTF8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=grades_for_table[0].keys())
+        writer = csv.DictWriter(f, fieldnames=sorted(all_task_id))
         writer.writeheader()
         writer.writerows(grades_for_table)
     print(f'Saved to csv file: {csv_path}')
