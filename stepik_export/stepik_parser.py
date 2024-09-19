@@ -120,7 +120,7 @@ def main():
     # output data to csv file
     csv_path = args.csv_path + '_' + args.course_id + '.csv'
     with open(csv_path, 'w', encoding='UTF8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=sorted(all_task_id))
+        writer = csv.DictWriter(f, fieldnames=sorted(str(el) for el in all_task_id))
         writer.writeheader()
         writer.writerows(grades_for_table)
     print(f'Saved to csv file: {csv_path}')
