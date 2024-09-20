@@ -6,6 +6,8 @@ import requests
 import csv
 import yadisk
 
+ALL_TASK_IDS = set()
+
 # check status code and if request is valid
 def check_access(response):
     if response.status_code != 200:
@@ -54,7 +56,10 @@ def parse_grades(user, url, token, sorted_steps):
         sorted_steps = sort_steps(lesson, user['results'])
 
     for i in sorted_steps:
-        grades.update({user['results'][i]['step_id']: user['results'][i]['score']})
+        key = user['results'][i]['step_id']
+        grades.update({key: user['results'][i]['score']})
+        global ALL_TASK_IDS
+        ALL_TASK_IDS.add(key)
     return grades
 
 
@@ -120,6 +125,8 @@ def main():
     # output data to csv file
     csv_path = args.csv_path + '_' + args.course_id + '.csv'
     with open(csv_path, 'w', encoding='UTF8', newline='') as f:
+        global ALL_TASK_IDS
+        fields = ['user id', 'full name', 'last viewed', 'total score'] + list(ALL_TASK_IDS)
         writer = csv.DictWriter(f, fieldnames=all_task_id)    # elements in all_task_id have different types (str / int)
         writer.writeheader()
         writer.writerows(grades_for_table)
