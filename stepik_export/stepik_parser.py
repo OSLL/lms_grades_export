@@ -127,7 +127,7 @@ def main():
     with open(csv_path, 'w', encoding='UTF8', newline='') as f:
         global ALL_TASK_IDS
         fields = ['user id', 'full name', 'last viewed', 'total score'] + list(ALL_TASK_IDS)
-        writer = csv.DictWriter(f, fieldnames=all_task_id)    # elements in all_task_id have different types (str / int)
+        writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
         writer.writerows(grades_for_table)
     print(f'Saved to csv file: {csv_path}')
