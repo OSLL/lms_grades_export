@@ -2,10 +2,28 @@ import httpx
 import json
 import csv
 import argparse
+import os
+import subprocess
 
 
-def get_awards_by_id(user_id: str | int, key: str, timeout) -> set:
+def get_id_by_name(user_id: str, curl_args):
+    if type(user_id) != str or user_id.isdigit():
+        return user_id
+    status, output = subprocess.getstatusoutput(
+        f'''curl 'https://developerprofiles-pa.clients6.google.com/$rpc/google.internal.developerprofiles.v1.profile.ProfileService/GetPublicProfile'  --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'X-Goog-Api-Key: {curl_args}' -H 'X-Goog-AuthUser: 0' -H 'Authorization: ' -H 'Content-Type: application/json+protobuf' -H 'X-User-Agent: grpc-web-javascript/0.1' -H 'Origin: https://developers.google.com' -H 'DNT: 1' -H 'Sec-GPC: 1' -H 'Connection: keep-alive' -H 'Referer: https://developers.google.com/' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -s --data-raw '[null,null,"{user_id}"]' '''
+    )  # curl because libs don't work
+    user_id = data = json.loads(
+        output
+    )
+    user_id = user_id[1][31]
+    return user_id
+
+def get_awards_by_id(user_id: str | int, key: str, curl_args, timeout) -> dict:
+    print(f'Processing id {user_id}')
     try:
+        if not (type(user_id) != str or user_id.isdigit()):
+            user_id = get_id_by_name(user_id, curl_args)
+            
         c = httpx.get(f'https://developerprofiles-pa.clients6.google.com/v1/awards?access_token&locale&obfuscatedProfileId={user_id}&useBadges=true&key={key}',
             headers={
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0',
@@ -32,23 +50,28 @@ def get_awards_by_id(user_id: str | int, key: str, timeout) -> set:
         ).text
         data = json.loads(c)
         award_titles = {
-            award.get('badge', {}).get('title', None)
+            award.get('badge', {}).get('title', None): award.get('createTime', {})
             for award in data.get('awards', {}) # this line handles bad ids (if err -> no rewards -> 0 on public profile column)
         }
         return award_titles
     except httpx.ConnectError:
         print('ConnectError')
-        return set()
+        return {}
 
 
-def get_awards(ids: [str | int], key: str, timeout) -> dict[set]:
-    awards = {user_id: get_awards_by_id(user_id, key, timeout) for user_id in ids}
+def get_awards(ids: [str | int], key: str, curl_args, timeout) -> dict[set]:
+    awards = {user_id: get_awards_by_id(user_id, key, curl_args, timeout) for user_id in ids}
     return awards
 
 
-def write_to_local_csv(awards: dict[set], fname: str = 'result.csv') -> None:
+def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv') -> None:
     column_names = set()
-    default_columns = ['id', 'public_profile']
+    default_columns = [
+        'id', 
+        'name', 
+        'public_profile', 
+        'profile created', 
+    ]
 
     for user_awards in awards.values():
         column_names.update(user_awards)
@@ -59,9 +82,14 @@ def write_to_local_csv(awards: dict[set], fname: str = 'result.csv') -> None:
             column_names
         )
         for user_awards in awards.items():
-            row = [user_awards[0], 1 if len(user_awards[1]) else 0]
+            row = [
+                get_id_by_name(user_awards[0], curl_args),
+                user_awards[0],
+                1 if len(user_awards[1]) else 0, 
+                user_awards[1].get('Joined the Google Developer Program'), 
+            ]
             for award_name in column_names[len(default_columns):]:
-                row.append(1 if award_name in user_awards[1] else 0)
+                row.append(user_awards[1][award_name] if award_name in user_awards[1] else 'No')
             award_writer.writerow(
                 row
             )
@@ -74,11 +102,12 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output', default='result.csv')
     parser.add_argument('-i', '--ids_file')
     parser.add_argument('-k', '--key')
+    parser.add_argument('-c', '--curl_args')
     parser.add_argument('-t', '--timeout', type=float, default=1)
     args = parser.parse_args()
 
     with open(args.ids_file) as file:
         lines = [line.rstrip() for line in file]
-    ids = map(int, lines)
-    q = get_awards(ids, args.key, args.timeout)
-    write_to_local_csv(q, args.output)
+    # ids = lines
+    q = get_awards(lines, args.key, args.curl_args, args.timeout)
+    write_to_local_csv(q, args.curl_args, args.output)
