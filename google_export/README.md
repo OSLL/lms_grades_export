@@ -9,5 +9,5 @@
 - -t | --timeout - таймаут 1 запроса
 
 ```bash
-python3 main.py -i 'ids' -o 'fname.csv' -k 'ключ' -t 0.1
+python3 main.py -i 'ids' -o 'fname.csv' -k 'ключ1' -c 'ключ2' -t 0.1
 ```

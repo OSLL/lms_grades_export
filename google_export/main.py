@@ -6,13 +6,51 @@ import os
 import subprocess
 
 
+def get_name(user_id: str, curl_args):
+    try:
+        if type(user_id) != str or user_id.isdigit():
+            status, output = subprocess.getstatusoutput(
+                f'''curl 'https://developerprofiles-pa.clients6.google.com/$rpc/google.internal.developerprofiles.v1.profile.ProfileService/GetPublicProfile' --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'X-Goog-Api-Key: AIzaSyAP-jjEJBzmIyKR4F-3XITp8yM9T1gEEI8' -H 'X-Goog-AuthUser: 0' -H 'Authorization: ' -H 'Content-Type: application/json+protobuf' -H 'X-User-Agent: grpc-web-javascript/0.1' -H 'Origin: https://developers.google.com' -H 'DNT: 1' -H 'Sec-GPC: 1' -H 'Connection: keep-alive' -H 'Referer: https://developers.google.com/' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'TE: trailers' -s --data-raw '["{user_id}"]' '''
+            )
+        else:
+            status, output = subprocess.getstatusoutput(
+                f'''curl 'https://developerprofiles-pa.clients6.google.com/$rpc/google.internal.developerprofiles.v1.profile.ProfileService/GetPublicProfile'  --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'X-Goog-Api-Key: {curl_args}' -H 'X-Goog-AuthUser: 0' -H 'Authorization: ' -H 'Content-Type: application/json+protobuf' -H 'X-User-Agent: grpc-web-javascript/0.1' -H 'Origin: https://developers.google.com' -H 'DNT: 1' -H 'Sec-GPC: 1' -H 'Connection: keep-alive' -H 'Referer: https://developers.google.com/' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -s --data-raw '[null,null,"{user_id}"]' '''
+            )  # curl because libs don't work
+        user_id = json.loads(
+            output
+        )
+        user_id = user_id[1][4][0]
+        return user_id
+    except httpx.ConnectError:
+        print('ConnectError')
+    return ""
+
+def get_link(user_id: str, curl_args):
+    try:
+        if type(user_id) != str or user_id.isdigit():
+            status, output = subprocess.getstatusoutput(
+                f'''curl 'https://developerprofiles-pa.clients6.google.com/$rpc/google.internal.developerprofiles.v1.profile.ProfileService/GetPublicProfile' --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'X-Goog-Api-Key: AIzaSyAP-jjEJBzmIyKR4F-3XITp8yM9T1gEEI8' -H 'X-Goog-AuthUser: 0' -H 'Authorization: ' -H 'Content-Type: application/json+protobuf' -H 'X-User-Agent: grpc-web-javascript/0.1' -H 'Origin: https://developers.google.com' -H 'DNT: 1' -H 'Sec-GPC: 1' -H 'Connection: keep-alive' -H 'Referer: https://developers.google.com/' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -H 'TE: trailers' -s --data-raw '["{user_id}"]' '''
+            )
+        else:
+            status, output = subprocess.getstatusoutput(
+                f'''curl 'https://developerprofiles-pa.clients6.google.com/$rpc/google.internal.developerprofiles.v1.profile.ProfileService/GetPublicProfile'  --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'X-Goog-Api-Key: {curl_args}' -H 'X-Goog-AuthUser: 0' -H 'Authorization: ' -H 'Content-Type: application/json+protobuf' -H 'X-User-Agent: grpc-web-javascript/0.1' -H 'Origin: https://developers.google.com' -H 'DNT: 1' -H 'Sec-GPC: 1' -H 'Connection: keep-alive' -H 'Referer: https://developers.google.com/' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -s --data-raw '[null,null,"{user_id}"]' '''
+            )  # curl because libs don't work
+        user_id = json.loads(
+            output
+        )
+        user_id = user_id[-1][-1]
+        return user_id
+    except httpx.ConnectError:
+        print('ConnectError')
+    return ""
+
 def get_id_by_name(user_id: str, curl_args):
     if type(user_id) != str or user_id.isdigit():
         return user_id
     status, output = subprocess.getstatusoutput(
         f'''curl 'https://developerprofiles-pa.clients6.google.com/$rpc/google.internal.developerprofiles.v1.profile.ProfileService/GetPublicProfile'  --compressed -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'X-Goog-Api-Key: {curl_args}' -H 'X-Goog-AuthUser: 0' -H 'Authorization: ' -H 'Content-Type: application/json+protobuf' -H 'X-User-Agent: grpc-web-javascript/0.1' -H 'Origin: https://developers.google.com' -H 'DNT: 1' -H 'Sec-GPC: 1' -H 'Connection: keep-alive' -H 'Referer: https://developers.google.com/' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' -s --data-raw '[null,null,"{user_id}"]' '''
     )  # curl because libs don't work
-    user_id = data = json.loads(
+    user_id = json.loads(
         output
     )
     user_id = user_id[1][31]
@@ -48,6 +86,9 @@ def get_awards_by_id(user_id: str | int, key: str, curl_args, timeout) -> dict:
             },
             timeout=timeout
         ).text
+        # print(
+        #     c
+        # )
         data = json.loads(c)
         award_titles = {
             award.get('badge', {}).get('title', None): award.get('createTime', {})
@@ -69,6 +110,7 @@ def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv') 
     default_columns = [
         'id', 
         'name', 
+        'link',
         'public_profile', 
         'profile created', 
     ]
@@ -81,15 +123,19 @@ def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv') 
         award_writer.writerow(
             column_names
         )
+        rows = []
         for user_awards in awards.items():
             row = [
                 get_id_by_name(user_awards[0], curl_args),
-                user_awards[0],
+                get_name(user_awards[0], curl_args),
+                get_link(user_awards[0], curl_args),
                 1 if len(user_awards[1]) else 0, 
                 user_awards[1].get('Joined the Google Developer Program'), 
             ]
             for award_name in column_names[len(default_columns):]:
                 row.append(user_awards[1][award_name] if award_name in user_awards[1] else 'No')
+            rows.append(tuple(row))
+        for row in set(rows):
             award_writer.writerow(
                 row
             )
