@@ -12,8 +12,9 @@ function download_csv() {
 
 function download_sheet_to_pdf() {
 # usage: download_sheet_to_pdf table_id sheet_id export_file_path
+# https://gist.github.com/Spencer-Easton/78f9867a691e549c9c70
   table_id="$1"
   sheet_id=${2:-'0'}
   export_file=${3:-'export.pdf'}
-  wget -O "$export_file" "https://docs.google.com/spreadsheets/d/$table_id/export?gid=$sheet_id&format=pdf"
+  wget -O "$export_file" "https://docs.google.com/spreadsheets/d/$table_id/export?gid=$sheet_id&format=pdf&fzr=true"
 }
