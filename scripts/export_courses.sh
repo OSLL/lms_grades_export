@@ -6,8 +6,12 @@
 #   'humanreadable_subject,table_id,sheet_name,system,exportinfo'
 # )
 # system: "moodle" - Предмет,1zG21U9zJHIkfAM5ejd8WBw,Онлайн-курс,moodle,course_id
-# system: "stepik" - Прудмет,1zG21U9zJHIkfAM5ejd8WBw,Онлайн-курс,stepik,course_id,class_id
+# system: "stepik" - Предмет,1zG21U9zJHIkfAM5ejd8WBw,Онлайн-курс,stepik,course_id,class_id
 # exportCourses "${exports[@]}"
+
+
+source ./download_file.sh
+
 
 function exportCourses() {
     # get args (=array of csv rows)
@@ -66,13 +70,4 @@ function exportCourses() {
         echo $end_info_msg
         echo $end_info_msg >> $log_file
     done
-}
-
-function download_csv() {
-# usage: download_csv table_id sheet_id export_file_path
-# csv-separater = ","
-  table_id="$1"
-  sheet_id=${2:-'0'}
-  export_file=${3:-'export.csv'}
-  wget -O $export_file "https://docs.google.com/spreadsheets/d/$table_id/export?gid=$sheet_id&format=csv"
 }
