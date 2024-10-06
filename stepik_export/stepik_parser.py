@@ -6,6 +6,8 @@ import requests
 import csv
 import yadisk
 
+ALL_TASK_IDS = set()
+
 # check status code and if request is valid
 def check_access(response):
     if response.status_code != 200:
@@ -54,7 +56,10 @@ def parse_grades(user, url, token, sorted_steps):
         sorted_steps = sort_steps(lesson, user['results'])
 
     for i in sorted_steps:
-        grades.update({user['results'][i]['step_id']: user['results'][i]['score']})
+        key = user['results'][i]['step_id']
+        grades.update({key: user['results'][i]['score']})
+        global ALL_TASK_IDS
+        ALL_TASK_IDS.add(key)
     return grades
 
 
@@ -88,12 +93,14 @@ def main():
         course_grades = check_access(grades_meta)
 
     # Parse grades
+    all_task_id = set()
     while True:
         if course_grades['course-grades']:
             print(f'Parse {page} page')
             for user in course_grades['course-grades']:
                 grades = parse_grades(user, args.url, token, sorted_steps)
                 grades_for_table.append(grades)
+                all_task_id.update(grades.keys())    # save all task id from student
             print('Parsed!')
 
             if course_grades['meta']['has_next']:
@@ -118,7 +125,9 @@ def main():
     # output data to csv file
     csv_path = args.csv_path + '_' + args.course_id + '.csv'
     with open(csv_path, 'w', encoding='UTF8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=grades_for_table[0].keys())
+        global ALL_TASK_IDS
+        fields = ['user id', 'full name', 'last viewed', 'total score'] + list(ALL_TASK_IDS)
+        writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
         writer.writerows(grades_for_table)
     print(f'Saved to csv file: {csv_path}')
