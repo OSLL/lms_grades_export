@@ -15,8 +15,8 @@ class DiskManager():
     """Light YaDisk manager
     """
 
-    def __init__(self, download_path='./'):
-        self.client = yadisk.Client(token=environ.get('YADISK_TOKEN'))
+    def __init__(self, yatoken=None, download_path='./'):
+        self.client = yadisk.Client(token=yatoken or environ.get('YADISK_TOKEN'))
         self.download_path = download_path
 
     def upload(self, local_path: str, disk_path: str, overwrite=True):

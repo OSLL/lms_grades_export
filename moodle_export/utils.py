@@ -23,7 +23,7 @@ def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_
             ws.append(row)
 
 
-def write_sheet_to_file(remote_path, csv_path, sheet_name='export'):
+def write_sheet_to_file(yatoken, remote_path, csv_path, sheet_name='export'):
     disk_manager = DiskManager()
 
     # download file to filesystem

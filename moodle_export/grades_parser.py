@@ -169,7 +169,7 @@ class Main:
                 if cls.args.yandex_token and cls.args.yandex_path:
                     # TODO: refactor нadisk
                     from utils import write_sheet_to_file
-                    write_sheet_to_file(cls.args.yandex_path, csv_path, sheet_name="Онлайн-курс")
+                    write_sheet_to_file(cls.args.yandex_token, cls.args.yandex_path, csv_path, sheet_name="Онлайн-курс")
                     
                     yandex_path = cls.args.yandex_path
                     print(f'Course {cls.args.course_id} uploaded to table on Disk! Path to the table is: {yandex_path}')
