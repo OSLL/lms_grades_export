@@ -24,7 +24,7 @@ def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_
 
 
 def write_sheet_to_file(yatoken, remote_path, csv_path, sheet_name='export'):
-    disk_manager = DiskManager()
+    disk_manager = DiskManager(yatoken=yatoken)
 
     # download file to filesystem
     local_path = disk_manager.download_file_from_disk(remote_path)
