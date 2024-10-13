@@ -144,25 +144,26 @@ class Main:
                 df.to_csv(csv_path, sep = ";", decimal= ",", encoding='UTF-8')
 
                 # if cls.args specified write data to sheets document
-                for i in range(0, len(cls.args.table_id)):
-                    if cls.args.course_id[i] == course_id:
-                        table_id = cls.args.table_id[i]
-                        break
-                    elif i == len(cls.args.table_id) - 1:
-                        table_id = cls.args.table_id[i]
+                if cls.args.google_token and cls.args.table_id:
 
-                if cls.args.sheet_id:
-                    for i in range(0, len(cls.args.sheet_id)):
+                    for i in range(0, len(cls.args.table_id)):
                         if cls.args.course_id[i] == course_id:
-                            sheet_id = cls.args.sheet_id[i]
+                            table_id = cls.args.table_id[i]
                             break
-                        else:
-                            sheet_id = cls.args.sheet_id[i] + ' ' + course_id
-                else:
-                    sheet_id = 'course ' + course_id
+                        elif i == len(cls.args.table_id) - 1:
+                            table_id = cls.args.table_id[i]
 
-                if cls.args.google_token and table_id and sheet_id :
-                    sheets.write_data_to_table(df, cls.args.google_token, table_id, sheet_id)
+                    if cls.args.sheet_id:
+                        for i in range(0, len(cls.args.sheet_id)):
+                            if cls.args.course_id[i] == course_id:
+                                sheet_id = cls.args.sheet_id[i]
+                                break
+                            else:
+                                sheet_id = cls.args.sheet_id[i] + ' ' + course_id
+                    else:
+                        sheet_id = 'course ' + course_id
+
+                        sheets.write_data_to_table(df, cls.args.google_token, table_id, sheet_id)
                 
                 # write data to yandex disk
                 if cls.args.yandex_token and cls.args.yandex_path:
