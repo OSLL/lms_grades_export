@@ -2,7 +2,7 @@
 
 """
 from datetime import datetime
-from os import environ
+from os import environ, path
 from logging import getLogger
 
 import yadisk
@@ -14,9 +14,10 @@ logger = getLogger()
 class DiskManager():
     """Light YaDisk manager
     """
-    def __init__(self):
-        self.client = yadisk.Client(token=environ.get('YADISK_TOKEN'))
 
+    def __init__(self, download_path='./'):
+        self.client = yadisk.Client(token=environ.get('YADISK_TOKEN'))
+        self.download_path = download_path
 
     def upload(self, local_path: str, disk_path: str, overwrite=True):
         """upload from local_path to disk_path
@@ -29,8 +30,22 @@ class DiskManager():
         logger.info("Uploading %s to %s", *(local_path, disk_path))
         self.client.upload(local_path, disk_path, overwrite=overwrite)
 
+    def download_file_from_disk(self, remote_path: str):
+        """_summary_
 
-def upload_file_to_disk(file_path: str, abs_disk_path="/MOEVM/Публичные ведомости МОЭВМ", overwrite=True):
+        Args:
+            remote_path (str): full path to file on yadisk
+
+        Returns:
+            str: path to downloaded file 
+        """
+        local_path = self.download_path + path.basename(remote_path)
+        self.client.download(remote_path, local_path)
+        return local_path
+
+
+def upload_file_to_disk(file_path: str, abs_disk_path="/MOEVM/Публичные ведомости МОЭВМ",
+                        overwrite=True):
     """hardcoded logic for uploading rating file to yadisk in pdf format
     might be run from bash
 
@@ -42,4 +57,5 @@ def upload_file_to_disk(file_path: str, abs_disk_path="/MOEVM/Публичные
 
     """
     disk_manager = DiskManager()
-    disk_manager.upload(file_path, f"{abs_disk_path}/{file_path}", overwrite=overwrite)
+    disk_manager.upload(
+        file_path, f"{abs_disk_path}/{file_path}", overwrite=overwrite)
