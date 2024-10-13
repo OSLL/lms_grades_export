@@ -8,7 +8,7 @@ from openpyxl import load_workbook
 from yadisk_manager import DiskManager
 
 
-CSV_DELIMITER = os.getenv('CSV_DELIMITER', ',')
+CSV_DELIMITER = os.getenv('CSV_DELIMITER', ';')
 
 
 def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
