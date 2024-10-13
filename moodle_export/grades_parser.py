@@ -161,7 +161,7 @@ class Main:
                 else:
                     sheet_id = 'course ' + course_id
 
-                if table_id and sheet_id:
+                if cls.args.google_token and table_id and sheet_id :
                     sheets.write_data_to_table(df, cls.args.google_token, table_id, sheet_id)
                 
                 # write data to yandex disk
