@@ -165,14 +165,12 @@ class Main:
                 
                 # write data to yandex disk
                 if cls.args.yandex_token and cls.args.yandex_path:
-                    yandex_path = cls.args.yandex_path + '_' + cls.args.course_id + '.csv'
-                    try:
-                        client = yadisk.YaDisk(token=cls.args.yandex_token)
-                        client.upload(csv_path, yandex_path)
-                        print(f'Course {cls.args.course_id} saved to Disk! Path to the table is: {yandex_path}')
-                        print('********************************************************')
-                    except Exception as e:
-                        print(f'Course {cls.args.course_id}: saving data to Yandex Disk failed. Error message: {e}')
+                    # TODO: refactor нadisk
+                    from ..scripts import utils
+                    utils.write_sheet_to_file(cls.args.yandex_path, csv_path, sheet_name="Онлайн-курс")
+                    
+                    yandex_path = cls.args.yandex_path
+                    print(f'Course {cls.args.course_id} uploaded to table on Disk! Path to the table is: {yandex_path}')
 
 if __name__ == "__main__":
     Main.main()
