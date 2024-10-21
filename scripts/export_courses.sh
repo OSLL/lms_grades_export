@@ -36,7 +36,7 @@ function exportCourses() {
               --course_id ${current_export[4]} \
               --table_id ${current_export[1]} \
               --sheet_id ${current_export[2]} \
-              --options github >& $log_file
+              --options github >>& $log_file
 
             return_code=$?
         fi
@@ -50,7 +50,7 @@ function exportCourses() {
               --course_id ${current_export[4]} \
               --class_id ${current_export[5]} \
               --table_id ${current_export[1]} \
-              --sheet_id ${current_export[2]} >& $log_file
+              --sheet_id ${current_export[2]} >>& $log_file
 
             return_code=$?
 
