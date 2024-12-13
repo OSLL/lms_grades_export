@@ -16,6 +16,8 @@ GOOGLE_DOCS_URL = 'https://docs.google.com'
 CLOUD_MAIL_URL = 'https://cloud.mail.ru'
 YANDEX_DISK_URL = 'https://disk.yandex.ru'
 
+FILES_TO_IGNORE = ("main.py", "README.md", "requirements.txt")
+
 logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -307,7 +309,7 @@ def main():
     for filename in os.listdir():
         if ".log" in filename:
             continue
-        if filename == "main.py":
+        if filename in FILES_TO_IGNORE:
             continue
         try:
             cloud_filepath = cloud_directory_path + filename
