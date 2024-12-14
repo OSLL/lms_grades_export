@@ -1,5 +1,3 @@
-# developer.google.com badges Parser
-
 ## Инструкция по запуску скрипта
 
 - --table_link - ссылка на таблицу формата https://docs.google.com/spreadsheets/d/{id}/edit? (важно наличие edit)
