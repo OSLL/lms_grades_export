@@ -32,10 +32,10 @@ def parse_args():
 
 def load_data_from_dis(checker_filter, checker_token):
     url = f'{EXPORT_URL}&{checker_filter}&access_token={checker_token}'
-    csv_data = StringIO(requests.get(url).content.decode('utf-8'))
+    csv_data = requests.get(url).content.decode('utf-8')
 
     if csv_data:
-        df = pd.read_csv(csv_data)
+        df = pd.read_csv(StringIO(csv_data))
         df_data = pd.DataFrame(df.to_dict('records'))
     else:
         df_data = pd.DataFrame(INT_MASS)
