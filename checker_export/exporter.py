@@ -14,7 +14,7 @@ INT_MASS = [{
 }]
 
 
-EXPORT_URL = "https://slides-checker.moevm.info/get_csv?limit=0&offset=0&sort=&order="
+EXPORT_URL = "https://slides-checker.moevm.info/get_csv/?limit=0&offset=0&sort=&order="
 
 
 def parse_args():
@@ -29,30 +29,37 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
+def load_data_from_dis(checker_filter, checker_token):
+    url = f'{EXPORT_URL}&{checker_filter}&access_token={checker_token}'
+    csv_data = StringIO(requests.get(url).content.decode('utf-8'))
+
+    if csv_data:
+        df = pd.read_csv(csv_data)
+        df_data = pd.DataFrame(df.to_dict('records'))
+    else:
+        df_data = pd.DataFrame(INT_MASS)
+    return csv_data, df_data
+
+
 def write_data_to_table(checker_token, checker_filter, google_token, table_id, sheet_id, yandex_token=None, yandex_path=None):
+    csv_data, df_data = load_data_from_dis(checker_filter, checker_token)
+    
     if google_token and sheet_id and table_id:
         gc = pygsheets.authorize(service_file=google_token)
         sh = gc.open_by_key(table_id)
 
-    wk_content = sh.worksheet_by_title(sheet_id)
-    
-    url = f'{EXPORT_URL}&{checker_filter}&access_token={checker_token}'
-    print(url)
-    csv_path = StringIO(requests.get(url).content.decode('utf-8'))
+        wk_content = sh.worksheet_by_title(sheet_id)
 
-    if csv_path:
-        df = pd.read_csv(csv_path)
-        content = pd.DataFrame(df.to_dict('records'))
-    else:
-        content = pd.DataFrame(INT_MASS)
-    wk_content.set_dataframe(content, 'A1', copy_head=True)
+        wk_content.set_dataframe(df_data, 'A1', copy_head=True)
+    
+    # write data to yandex disk
     if yandex_token and yandex_path:
-        try:
-            client = yadisk.YaDisk(token=yandex_token)
-            client.upload(str(csv_path), yandex_path)
-            print(f'Check data in your disk! Path to the table is: {yandex_path}')
-        except Exception as e:
-            print(f'Saving data to Yandex Disk failed. Error message: {e}')
+        # TODO: refactor нadisk
+        from utils import write_sheet_to_file
+        write_sheet_to_file(yandex_token, yandex_path, csv_data, sheet_name="reports")
+        
+        print(f'DIS data w/filter: {checker_filter} uploaded to table on Disk! Path to the table is: {yandex_path}')
 
 
 def main():
