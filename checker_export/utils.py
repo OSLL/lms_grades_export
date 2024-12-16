@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from yadisk_manager import DiskManager
 
 
-CSV_DELIMITER = os.getenv('CSV_DELIMITER', ';')
+CSV_DELIMITER = os.getenv('CSV_DELIMITER', ',')
 
 
 def add_csv_to_table(csv_content, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
@@ -19,7 +19,7 @@ def add_csv_to_table(csv_content, workbook, sheet_name='export', delimiter=CSV_D
     ws = workbook.create_sheet(sheet_name)
     
     for row in csv_content.split('\n'):
-        ws.append(row)
+        ws.append(row.split(CSV_DELIMITER))
 
 
 def write_sheet_to_file(yatoken, remote_path, csv_path, sheet_name='export'):
