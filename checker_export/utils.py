@@ -12,14 +12,16 @@ from yadisk_manager import DiskManager
 CSV_DELIMITER = os.getenv('CSV_DELIMITER', ',')
 
 
-def add_csv_to_table(csv_content, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
+def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
     # delete existing sheet to rewrite
     if sheet_name in workbook.sheetnames:
         workbook.remove(workbook[sheet_name])
     ws = workbook.create_sheet(sheet_name)
     
-    for row in csv_content.split('\n'):
-        ws.append(row.split(CSV_DELIMITER))
+    with open(csv_filepath, encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter=delimiter)
+        for row in reader:
+            ws.append(row)
 
 
 def write_sheet_to_file(yatoken, remote_path, csv_path, sheet_name='export'):

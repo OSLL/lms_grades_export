@@ -39,11 +39,16 @@ def load_data_from_dis(checker_filter, checker_token):
         df_data = pd.DataFrame(df.to_dict('records'))
     else:
         df_data = pd.DataFrame(INT_MASS)
-    return csv_data, df_data
+    
+    csv_path = "./dis_results.csv"
+    with open(csv_path, mode='w', encoding="utf-8") as file:
+        file.write(csv_data)        
+    
+    return csv_path, df_data
 
 
 def write_data_to_table(checker_token, checker_filter, google_token, table_id, sheet_id, yandex_token=None, yandex_path=None):
-    csv_data, df_data = load_data_from_dis(checker_filter, checker_token)
+    csv_path, df_data = load_data_from_dis(checker_filter, checker_token)
     
     if google_token and sheet_id and table_id:
         gc = pygsheets.authorize(service_file=google_token)
@@ -57,7 +62,7 @@ def write_data_to_table(checker_token, checker_filter, google_token, table_id, s
     if yandex_token and yandex_path:
         # TODO: refactor нadisk
         from utils import write_sheet_to_file
-        write_sheet_to_file(yandex_token, yandex_path, csv_data, sheet_name="reports")
+        write_sheet_to_file(yandex_token, yandex_path, csv_path, sheet_name="reports")
         
         print(f'DIS data w/filter: {checker_filter} uploaded to table on Disk! Path to the table is: {yandex_path}')
 
