@@ -1,5 +1,5 @@
 """utils module for yadisk interactions
-duplicate moodle_export/*
+some duplicate moodle_export/*
 """
 import csv
 import os
@@ -12,16 +12,14 @@ from yadisk_manager import DiskManager
 CSV_DELIMITER = os.getenv('CSV_DELIMITER', ';')
 
 
-def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
+def add_csv_to_table(csv_content, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
     # delete existing sheet to rewrite
     if sheet_name in workbook.sheetnames:
         workbook.remove(workbook[sheet_name])
     ws = workbook.create_sheet(sheet_name)
     
-    with open(csv_filepath, encoding="utf-8") as f:
-        reader = csv.reader(f, delimiter=delimiter)
-        for row in reader:
-            ws.append(row)
+    for row in csv_content.split('\n'):
+        ws.append(row)
 
 
 def write_sheet_to_file(yatoken, remote_path, csv_path, sheet_name='export'):
