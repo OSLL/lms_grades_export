@@ -13,10 +13,13 @@ CSV_DELIMITER = os.getenv('CSV_DELIMITER', ',')
 
 
 def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_DELIMITER):
-    # delete existing sheet to rewrite
+    # clear sheet instead removing, that can break formulas
     if sheet_name in workbook.sheetnames:
-        workbook.remove(workbook[sheet_name])
-    ws = workbook.create_sheet(sheet_name)
+        #workbook.remove(workbook[sheet_name])
+        ws = workbook[sheet_name]
+        ws.delete_cols(0, 100)    
+    else:
+        ws = workbook.create_sheet(sheet_name)
     
     with open(csv_filepath, encoding="utf-8") as f:
         reader = csv.reader(f, delimiter=delimiter)
