@@ -16,7 +16,7 @@ def add_csv_to_table(csv_filepath, workbook, sheet_name='export', delimiter=CSV_
     if sheet_name in workbook.sheetnames:
         #workbook.remove(workbook[sheet_name])
         ws = workbook[sheet_name]
-        ws.delete_cols(0, 100)    # clear sheet instead removing, that can break formulas
+        ws.insert_rows(idx=0, amount=0)    # clear sheet instead removing, that can break formulas
     else:
         ws = workbook.create_sheet(sheet_name)
     
