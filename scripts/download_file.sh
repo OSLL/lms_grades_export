@@ -16,6 +16,6 @@ function download_sheet() {
   table_id="$1"
   sheet_id=${2:-'0'}
   filename=${3:-'export'}
-  extension=${3:-'pdf'}
+  extension=${4:-'pdf'}
   wget -O "$export_file.$extension" "https://docs.google.com/spreadsheets/d/$table_id/export?gid=$sheet_id&format=$extension&fzr=true"
 }
