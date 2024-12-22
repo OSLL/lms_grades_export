@@ -27,7 +27,7 @@ function duplicateSheetsToYadisk() {
         echo $info_msg
         echo $info_msg >> $log_file
 
-        filename="${current_export[4]}.${current_export[3]}"
+        filename="${current_export[4]}".${current_export[3]}
         # export to file
         download_sheet ${current_export[1]} ${current_export[2]} "${current_export[4]}" ${current_export[3]}
         echo $filename
