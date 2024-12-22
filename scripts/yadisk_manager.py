@@ -44,7 +44,7 @@ class DiskManager():
         return local_path
 
 
-def upload_file_to_disk(file_path: str, abs_disk_path="/MOEVM/Публичные ведомости МОЭВМ",
+def upload_file_to_disk(file_path: str, abs_disk_path="/Учебные дисциплины - таблицы и формы",
                         overwrite=True):
     """hardcoded logic for uploading rating file to yadisk in pdf format
     might be run from bash
@@ -52,7 +52,7 @@ def upload_file_to_disk(file_path: str, abs_disk_path="/MOEVM/Публичные
     Args:
         file_path (str): path to local file 
         abs_disk_path (str, optional): full path to file on yadisk.
-            Defaults to "/MOEVM/Публичные ведомости МОЭВМ".
+            Defaults to "/Учебные дисциплины - таблицы и формы".
         overwrite (bool): overwrite file. Defaults to true
 
     """
