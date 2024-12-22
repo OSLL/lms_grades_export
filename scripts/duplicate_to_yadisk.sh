@@ -23,7 +23,7 @@ function duplicateSheetsToYadisk() {
     for line in "${exports[@]}"; do
         IFS=',' read -r -a current_export <<< "$line"
 
-        info_msg=">>>>> Экспорт для дисциплины ${current_export[0]} из таблицы ${current_export[1]}, лист ${current_export[2]} в ${current_export[4]}"
+        info_msg=">>>>> Экспорт для дисциплины ${current_export[0]} из таблицы ${current_export[1]}, лист ${current_export[2]} в ${current_export[4]} (формат ${current_export[3]})"
         echo $info_msg
         echo $info_msg >> $log_file
 
