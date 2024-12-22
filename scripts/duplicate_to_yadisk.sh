@@ -30,7 +30,7 @@ function duplicateSheetsToYadisk() {
         filename="${current_export[4]}.${current_export[3]}"
         # export to file
         download_sheet ${current_export[1]} ${current_export[2]} "${current_export[4]}" ${current_export[3]}
-
+        echo $filename
         # upload file
         YADISK_TOKEN=$YADISK_TOKEN python3 -c "import yadisk_manager; yadisk_manager.upload_file_to_disk(file_path='$filename', abs_disk_path='$YADISK_TDIR')" 
 
