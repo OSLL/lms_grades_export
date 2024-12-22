@@ -27,12 +27,13 @@ function duplicateSheetsToYadisk() {
         echo $info_msg
         echo $info_msg >> $log_file
 
-        filename="${current_export[4]}".${current_export[3]}
+        filename="${current_export[4]}.${current_export[3]}"
         # export to file
         download_sheet ${current_export[1]} ${current_export[2]} "${current_export[4]}" ${current_export[3]}
         echo $filename
+        echo "${current_export[4]}.${current_export[3]}"
         # upload file
-        YADISK_TOKEN=$YADISK_TOKEN python3 -c "import yadisk_manager; yadisk_manager.upload_file_to_disk(file_path='$filename', abs_disk_path='$YADISK_TDIR')" 
+        YADISK_TOKEN=$YADISK_TOKEN python3 -c "import yadisk_manager; yadisk_manager.upload_file_to_disk(file_path='${current_export[4]}.${current_export[3]}', abs_disk_path='$YADISK_TDIR')" 
 
         
         end_info_msg=">>>>> Конец экспорта для дисциплины"
