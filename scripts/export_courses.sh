@@ -30,37 +30,39 @@ function exportCourses() {
         echo $info_msg
         echo $info_msg >> $log_file
         
-        if [[ "${current_export[3]}" == "moodle" ]]; then
-            docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest \
-              --moodle_token $moodle_token --url https://e.moevm.info \
-              --csv_path grades --google_token conf.json \
-              --course_id ${current_export[4]} \
-              --table_id ${current_export[1]} \
-              --sheet_id ${current_export[2]} \
-              --options github >> $log_file
+          case "${current_export[3]}" in
+            "moodle")
+                docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest \
+                --moodle_token $moodle_token --url https://e.moevm.info \
+                --csv_path grades --google_token conf.json \
+                --course_id ${current_export[4]} \
+                --table_id ${current_export[1]} \
+                --sheet_id ${current_export[2]} \
+                --options github >> $log_file
 
-            return_code=$?
-        fi
+                return_code=$?
+                ;;
+            "stepik")
+                docker run --rm -v $google_conf:/app/conf.json stepik_export_parser:latest \
+                --client_id $stepik_client_id --client_secret $stepik_client_secret \
+                --url https://stepik.org:443/api \
+                --csv_path grades --google_token conf.json \
+                --course_id ${current_export[4]} \
+                --class_id ${current_export[5]} \
+                --table_id ${current_export[1]} \
+                --sheet_id ${current_export[2]} >> $log_file
 
-        if [[ "${current_export[3]}" == "stepik" ]]; then
-
-            docker run --rm -v $google_conf:/app/conf.json stepik_export_parser:latest \
-              --client_id $stepik_client_id --client_secret $stepik_client_secret \
-              --url https://stepik.org:443/api \
-              --csv_path grades --google_token conf.json \
-              --course_id ${current_export[4]} \
-              --class_id ${current_export[5]} \
-              --table_id ${current_export[1]} \
-              --sheet_id ${current_export[2]} >> $log_file
-
-            return_code=$?
-
-        fi
-
-        if [[ "${current_export[3]}" == "checker" ]]; then
-            echo "Not implemented"
-            return_code=1
-        fi
+                return_code=$?
+                ;;
+            "checker")
+                echo "Not implemented"
+                return_code=1
+                ;;
+            *)
+                echo "Недопустимое значение: '${current_export[3]}'"
+                return_code=1
+                ;;
+        esac
 
         if [[ "$return_code" -ne "0" ]]; then
             error_info_msg="!!!!! Возникла ошибка во время экспорта для ${current_export[0]}"
