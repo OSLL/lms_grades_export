@@ -12,6 +12,7 @@
 
 source ./download_file.sh
 
+is_error=0
 
 function exportCourses() {
     # get args (=array of csv rows)
@@ -62,12 +63,21 @@ function exportCourses() {
         fi
 
         if [[ "$return_code" -ne "0" ]]; then
+            error_info_msg="!!!!! Возникла ошибка во время экспорта для ${current_export[0]}"
+            echo $error_info_msg
+            echo $error_info_msg >> $log_file
             cat $log_file
-            exit 1
+            is_error=1
         fi
         
         end_info_msg=">>>>> Конец экспорта для дисциплины"
         echo $end_info_msg
         echo $end_info_msg >> $log_file
     done
+
+    if [[ "$is_error" -ne "0" ]]; then
+        error_info_msg="!!!!! Возникла ошибка во время экспорта - проверьте логи"
+        exit 1
+    fi
+
 }
