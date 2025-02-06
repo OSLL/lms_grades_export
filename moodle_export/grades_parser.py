@@ -144,35 +144,35 @@ class Main:
                 df.to_csv(csv_path, sep = ";", decimal= ",", encoding='UTF-8')
 
                 # if cls.args specified write data to sheets document
-                for i in range(0, len(cls.args.table_id)):
-                    if cls.args.course_id[i] == course_id:
-                        table_id = cls.args.table_id[i]
-                        break
-                    elif i == len(cls.args.table_id) - 1:
-                        table_id = cls.args.table_id[i]
+                if cls.args.google_token and cls.args.table_id:
 
-                if cls.args.sheet_id:
-                    for i in range(0, len(cls.args.sheet_id)):
+                    for i in range(0, len(cls.args.table_id)):
                         if cls.args.course_id[i] == course_id:
-                            sheet_id = cls.args.sheet_id[i]
+                            table_id = cls.args.table_id[i]
                             break
-                        else:
-                            sheet_id = cls.args.sheet_id[i] + ' ' + course_id
-                else:
-                    sheet_id = 'course ' + course_id
+                        elif i == len(cls.args.table_id) - 1:
+                            table_id = cls.args.table_id[i]
 
-                sheets.write_data_to_table(df, cls.args.google_token, table_id, sheet_id)
+                    if cls.args.sheet_id:
+                        for i in range(0, len(cls.args.sheet_id)):
+                            if cls.args.course_id[i] == course_id:
+                                sheet_id = cls.args.sheet_id[i]
+                                break
+                            else:
+                                sheet_id = cls.args.sheet_id[i] + ' ' + course_id
+                    else:
+                        sheet_id = 'course ' + course_id
+
+                    sheets.write_data_to_table(df, cls.args.google_token, table_id, sheet_id)
                 
                 # write data to yandex disk
                 if cls.args.yandex_token and cls.args.yandex_path:
-                    yandex_path = cls.args.yandex_path + '_' + cls.args.course_id + '.csv'
-                    try:
-                        client = yadisk.YaDisk(token=cls.args.yandex_token)
-                        client.upload(csv_path, yandex_path)
-                        print(f'Course {cls.args.course_id} saved to Disk! Path to the table is: {yandex_path}')
-                        print('********************************************************')
-                    except Exception as e:
-                        print(f'Course {cls.args.course_id}: saving data to Yandex Disk failed. Error message: {e}')
+                    # TODO: refactor нadisk
+                    from utils import write_sheet_to_file
+                    write_sheet_to_file(cls.args.yandex_token, cls.args.yandex_path, csv_path, sheet_name="Онлайн-курс")
+                    
+                    yandex_path = cls.args.yandex_path
+                    print(f'Course {cls.args.course_id} uploaded to table on Disk! Path to the table is: {yandex_path}')
 
 if __name__ == "__main__":
     Main.main()
