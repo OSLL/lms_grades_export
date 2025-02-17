@@ -28,6 +28,8 @@ def cut_lines(lines: [str], skip=0):
 
 
 def write_data_to_table(df_data, google_token, table_id, sheet_id):
+    df_data = df_data.sort_values(by='Joined the Google Developer Program')
+
     if google_token and sheet_id and table_id:
         gc = pygsheets.authorize(service_file=google_token)
         sh = gc.open_by_key(table_id)

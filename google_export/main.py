@@ -131,7 +131,7 @@ def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv', 
 
     for user_awards in awards.values():
         column_names.update(user_awards)
-    column_names = default_columns + list(column_names)
+    column_names = default_columns + sorted(list(column_names))
     with open(fname, 'w', newline='') as csvfile:
         award_writer = csv.writer(csvfile)
         award_writer.writerow(
