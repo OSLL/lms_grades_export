@@ -64,6 +64,7 @@ def get_id_by_name(user_id: str, curl_args):
     user_id = json.loads(
         output
     )
+    print(user_id)
     user_id = user_id[1][31]
     return user_id
 
@@ -115,7 +116,14 @@ def get_awards_by_id(user_id: str | int, key: str, curl_args, timeout, rec_limit
 
 
 def get_awards(ids: [str | int], key: str, curl_args, timeout, rec_limit=10) -> dict[set]:
-    awards = {user_id: get_awards_by_id(user_id, key, curl_args, timeout, rec_limit) for user_id in ids}
+    awards = {}
+    for user_id in ids:
+        try:
+            user_awards = get_awards_by_id(user_id, key, curl_args, timeout, rec_limit)
+            awards[user_id] = user_awards
+        except Exception as e:
+            print(f'Error during processing id = {user_id}, it will be skipped')
+            print(e)
     return awards
 
 
@@ -124,7 +132,7 @@ def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv', 
     default_columns = [
         'id',
         'name',
-        'link',
+        'url_id',
         'public_profile',
         'profile created',
     ]
@@ -142,7 +150,7 @@ def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv', 
             row = [
                 get_id_by_name(user_awards[0], curl_args),
                 get_name(user_awards[0], curl_args, rec_limit),
-                get_link(user_awards[0], curl_args, rec_limit),
+                user_awards[0],
                 1 if len(user_awards[1]) else 0,
                 user_awards[1].get('Joined the Google Developer Program'),
             ]
