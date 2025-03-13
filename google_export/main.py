@@ -201,7 +201,7 @@ if __name__ == '__main__':
     else:
         print('set ids file or google table input')
     q = get_awards(lines, args.key, args.curl_args, args.timeout, args.repeat)
-    write_to_local_csv(q, args.curl_args, args.output, args.repeat,)
+    write_to_local_csv(q, args.curl_args, args.output, args.repeat)
     if args.google_token and args.table_id and args.sheet_id:
         sheets.write_data_to_table(
             pandas.read_csv(args.output),
