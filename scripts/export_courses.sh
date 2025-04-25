@@ -7,6 +7,7 @@
 # )
 # system: "moodle" - Предмет,1zG21U9zJHIkfAM5ejd8WBw,Онлайн-курс,moodle,course_id
 # system: "stepik" - Предмет,1zG21U9zJHIkfAM5ejd8WBw,Онлайн-курс,stepik,course_id,class_id
+# system: "dis" - Предмет,1zG21U9zJHIkfAM5ejd8WBw,Онлайн-курс,dis,filter
 # exportCourses "${exports[@]}"
 
 
@@ -32,31 +33,36 @@ function exportCourses() {
         
           case "${current_export[3]}" in
             "moodle")
-                docker run --rm -v $google_conf:/app/conf.json moodle_export_parser:latest \
-                --moodle_token $moodle_token --url https://e.moevm.info \
-                --csv_path grades --google_token conf.json \
-                --course_id ${current_export[4]} \
-                --table_id ${current_export[1]} \
-                --sheet_id ${current_export[2]} \
-                --options github >> $log_file
+                docker run --rm -v $EXPORTER_GOOGLE_CONF:/app/conf.json moodle_export_parser:latest \
+                    --moodle_token $MOODLE_TOKEN --url https://e.moevm.info \
+                    --csv_path grades --google_token conf.json \
+                    --course_id ${current_export[4]} \
+                    --table_id ${current_export[1]} \
+                    --sheet_name ${current_export[2]} \
+                    --options github >> $log_file
 
                 return_code=$?
                 ;;
             "stepik")
-                docker run --rm -v $google_conf:/app/conf.json stepik_export_parser:latest \
-                --client_id $stepik_client_id --client_secret $stepik_client_secret \
-                --url https://stepik.org:443/api \
-                --csv_path grades --google_token conf.json \
-                --course_id ${current_export[4]} \
-                --class_id ${current_export[5]} \
-                --table_id ${current_export[1]} \
-                --sheet_id ${current_export[2]} >> $log_file
+                docker run --rm -v $EXPORTER_GOOGLE_CONF:/app/conf.json stepik_export_parser:latest \
+                    --client_id $STEPIK_CLIENT_ID --client_secret $STEPIK_CLIENT_SECRET \
+                    --url https://stepik.org:443/api \
+                    --csv_path grades --google_token conf.json \
+                    --course_id ${current_export[4]} \
+                    --class_id ${current_export[5]} \
+                    --table_id ${current_export[1]} \
+                    --sheet_name ${current_export[2]} >> $log_file
 
                 return_code=$?
                 ;;
-            "checker")
-                echo "Not implemented"
-                return_code=1
+            "dis")
+                docker run --rm -v $EXPORTER_GOOGLE_CONF:/app/conf.json checker_export_parser:latest \
+                    --checker_filter "${current_export[4]}" \
+                    --checker_token $DIS_ACCESS_TOKEN \
+                    --table_id ${current_export[1]} \
+                    --sheet_name ${current_export[2]} >> $log_file
+
+                return_code=$?
                 ;;
             *)
                 echo "Недопустимое значение: '${current_export[3]}'"

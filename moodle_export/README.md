@@ -18,7 +18,7 @@
 
 Получение данных и в файл, и в Google таблицу:
 
-```python3 grades_parser.py grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github] --google_token "your google token" --table_id "your table id"[,"id",..] [--sheet_id "name of sheet"[,"name",..]] ```
+```python3 grades_parser.py grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github] --google_token "your google token" --table_id "your table id"[,"id",..] [--sheet_name "name of sheet"[,"name",..]] ```
 
 Получение данных и в файл, и на Яндекс Диск:
 
@@ -36,7 +36,7 @@
 
 Запуск докер контейнера с параметрами:
 
-``` docker run --rm grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github] --google_token "your google token" --table_id "your table id"[,"id",..] [--sheet_id "name of sheet"[,"name",..]] ```
+``` docker run --rm grades_parser --moodle_token "your token" --url http://e.moevm.info --course_id "your course id"[,"id",..] --csv_path "name of file" [--percentages] [--options github] --google_token "your google token" --table_id "your table id"[,"id",..] [--sheet_name "name of sheet"[,"name",..]] ```
 
 
 ## Получение Moodle Токена.
