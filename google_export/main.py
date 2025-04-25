@@ -1,12 +1,16 @@
-import httpx
-import json
-import csv
 import argparse
-import os
+import csv
+import json
 import subprocess
+import time
+
+import httpx
+import pandas
+
+import sheets
 
 
-def get_name(user_id: str, curl_args):
+def get_name(user_id: str, curl_args, rec_limit=10):
     try:
         if type(user_id) != str or user_id.isdigit():
             status, output = subprocess.getstatusoutput(
@@ -22,10 +26,14 @@ def get_name(user_id: str, curl_args):
         user_id = user_id[1][4][0]
         return user_id
     except httpx.ConnectError:
-        print('ConnectError')
+        if rec_limit == 0:
+            print('ConnectError')
+            return ""
+        time.sleep(0.1)
+        return get_name(user_id, curl_args, rec_limit-1)
     return ""
 
-def get_link(user_id: str, curl_args):
+def get_link(user_id: str, curl_args, rec_limit=10):
     try:
         if type(user_id) != str or user_id.isdigit():
             status, output = subprocess.getstatusoutput(
@@ -41,7 +49,10 @@ def get_link(user_id: str, curl_args):
         user_id = user_id[-1][-1]
         return user_id
     except httpx.ConnectError:
-        print('ConnectError')
+        if rec_limit == 0:
+            print('ConnectError')
+            return ""
+        time.sleep(0.1)
     return ""
 
 def get_id_by_name(user_id: str, curl_args):
@@ -53,15 +64,16 @@ def get_id_by_name(user_id: str, curl_args):
     user_id = json.loads(
         output
     )
+    print(user_id)
     user_id = user_id[1][31]
     return user_id
 
-def get_awards_by_id(user_id: str | int, key: str, curl_args, timeout) -> dict:
+def get_awards_by_id(user_id: str | int, key: str, curl_args, timeout, rec_limit=10) -> dict:
     print(f'Processing id {user_id}')
     try:
         if not (type(user_id) != str or user_id.isdigit()):
             user_id = get_id_by_name(user_id, curl_args)
-            
+
         c = httpx.get(f'https://developerprofiles-pa.clients6.google.com/v1/awards?access_token&locale&obfuscatedProfileId={user_id}&useBadges=true&key={key}',
             headers={
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0',
@@ -96,28 +108,38 @@ def get_awards_by_id(user_id: str | int, key: str, curl_args, timeout) -> dict:
         }
         return award_titles
     except httpx.ConnectError:
-        print('ConnectError')
-        return {}
+        if rec_limit == 0:
+            print('ConnectError')
+            return {}
+        time.sleep(0.1)
+        return get_awards_by_id(user_id, key, curl_args, timeout, rec_limit-1)
 
 
-def get_awards(ids: [str | int], key: str, curl_args, timeout) -> dict[set]:
-    awards = {user_id: get_awards_by_id(user_id, key, curl_args, timeout) for user_id in ids}
+def get_awards(ids: [str | int], key: str, curl_args, timeout, rec_limit=10) -> dict[set]:
+    awards = {}
+    for user_id in ids:
+        try:
+            user_awards = get_awards_by_id(user_id, key, curl_args, timeout, rec_limit)
+            awards[user_id] = user_awards
+        except Exception as e:
+            print(f'Error during processing id = {user_id}, it will be skipped')
+            print(e)
     return awards
 
 
-def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv') -> None:
+def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv', rec_limit=10) -> None:
     column_names = set()
     default_columns = [
-        'id', 
-        'name', 
-        'link',
-        'public_profile', 
-        'profile created', 
+        'id',
+        'name',
+        'url_id',
+        'public_profile',
+        'profile created',
     ]
 
     for user_awards in awards.values():
         column_names.update(user_awards)
-    column_names = default_columns + list(column_names)
+    column_names = default_columns + sorted(list(column_names))
     with open(fname, 'w', newline='') as csvfile:
         award_writer = csv.writer(csvfile)
         award_writer.writerow(
@@ -127,10 +149,10 @@ def write_to_local_csv(awards: dict[set], curl_args, fname: str = 'result.csv') 
         for user_awards in awards.items():
             row = [
                 get_id_by_name(user_awards[0], curl_args),
-                get_name(user_awards[0], curl_args),
-                get_link(user_awards[0], curl_args),
-                1 if len(user_awards[1]) else 0, 
-                user_awards[1].get('Joined the Google Developer Program'), 
+                get_name(user_awards[0], curl_args, rec_limit),
+                user_awards[0],
+                1 if len(user_awards[1]) else 0,
+                user_awards[1].get('Joined the Google Developer Program'),
             ]
             for award_name in column_names[len(default_columns):]:
                 row.append(user_awards[1][award_name] if award_name in user_awards[1] else 'No')
@@ -150,10 +172,49 @@ if __name__ == '__main__':
     parser.add_argument('-k', '--key')
     parser.add_argument('-c', '--curl_args')
     parser.add_argument('-t', '--timeout', type=float, default=1)
-    args = parser.parse_args()
+    parser.add_argument('-r', '--repeat', type=int, default=10)
 
-    with open(args.ids_file) as file:
-        lines = [line.rstrip() for line in file]
+    parser.add_argument('--google_token', type=str, required=False, help='Specify path to google token file')
+    parser.add_argument('--table_id', type=str, required=False)
+    parser.add_argument('--sheet_id', type=str, required=False)
+    parser.add_argument('--input_sheet_id', type=str, required=False)
+    parser.add_argument('--input_column_number', type=int, required=False)
+    parser.add_argument('--input_column_skip', type=int, required=False, default=0)
+
+    parser.add_argument('--yandex_token', type=str, required=False)
+    parser.add_argument('--yandex_path', type=str, required=False)
+
+    args = parser.parse_args()
+    lines = None
+    if args.ids_file:
+        with open(args.ids_file) as file:
+            lines = [line.rstrip() for line in file]
     # ids = lines
-    q = get_awards(lines, args.key, args.curl_args, args.timeout)
-    write_to_local_csv(q, args.curl_args, args.output)
+    elif args.google_token and args.table_id and args.input_sheet_id:
+        lines = sheets.read_ids_from_table(
+            args.google_token,
+            args.table_id,
+            args.input_sheet_id,
+            args.input_column_number
+        )
+        lines = sheets.cut_lines(lines, args.input_column_skip)
+    else:
+        print('set ids file or google table input')
+    q = get_awards(lines, args.key, args.curl_args, args.timeout, args.repeat)
+    write_to_local_csv(q, args.curl_args, args.output, args.repeat)
+    if args.google_token and args.table_id and args.sheet_id:
+        sheets.write_data_to_table(
+            pandas.read_csv(args.output),
+            args.google_token,
+            args.table_id,
+            args.sheet_id
+        )
+
+    if args.yandex_token and args.yandex_path:
+        import yandex_disk
+        yandex_disk.DiskManager(
+            yatoken=args.yandex_token
+        ).upload(
+            args.output,
+            args.yandex_path
+        )
